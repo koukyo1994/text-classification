@@ -20,7 +20,7 @@ y_test = None
 
 def optimal_params(trial: optuna.Trial):
     boosting = trial.suggest_categorical("boosting_type",
-                                         ["gbdt", "dart", "goss"])
+                                         ["gbdt", "dart"])
     learning = trial.suggest_uniform("learning_rate", 1e-5, 0.2)
     num_leaves = trial.suggest_int("num_leaves", 5, 1000)
     sub_sample = trial.suggest_int("subsample_for_bin", 100, 200000)
@@ -36,7 +36,7 @@ def optimal_params(trial: optuna.Trial):
     params = {
         "objective": "multiclass",
         "boosting_type": boosting,
-        "n_estimators": 10000,
+        "n_estimators": 2000,
         "learning_rate": learning,
         "num_leaves": num_leaves,
         "subsample_for_bin": sub_sample,
@@ -48,7 +48,8 @@ def optimal_params(trial: optuna.Trial):
         "colsample_bytree": feature_frac,
         "reg_alpha": lambda_l1,
         "reg_lambda": lambda_l2,
-        "max_bin": max_bin
+        "max_bin": max_bin,
+        "n_jobs": 1
     }
     model = lgb.LGBMClassifier(**params)
     oof_preds = np.zeros((X.shape[0], ))
@@ -64,13 +65,15 @@ def optimal_params(trial: optuna.Trial):
             verbose=100)
         y_pred = model.predict(X_val)
         oof_preds[val_index] = y_pred
-    f1 = f1_score(y_test, oof_preds, average="macro")
+    f1 = f1_score(y, oof_preds, average="macro")
     return (1.0 - f1)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp", default="exp")
+    parser.add_argument("--ntrial", default=200, type=int)
+    parser.add_argument("--n_jobs", default=3, type=int)
 
     args = parser.parse_args()
     logger = get_logger(exp=args.exp)
@@ -96,7 +99,7 @@ if __name__ == "__main__":
 
     with timer("optimize", logger):
         study = optuna.create_study()
-        study.optimize(optimal_params, n_trials=1000, n_jobs=-1)
+        study.optimize(optimal_params, n_trials=args.ntrial, n_jobs=args.n_jobs)
 
     logger.info(f"Best params: {study.best_params}")
     logger.info(f"Best value: {study.best_value}")
