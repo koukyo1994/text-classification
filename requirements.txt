@@ -7,3 +7,4 @@ Flask==1.0.2
 scikit-learn==0.20.1
 lightgbm==2.2.1
 optuna==0.7.0
+ipdb==0.11
