@@ -70,6 +70,8 @@ if __name__ == "__main__":
                 early_stopping_rounds=50,
                 verbose=100)
             models.append(model)
-    y_pred = np.mean([m.predict(X_test) for m in models], axis=1)
-    f1 = f1_score(y_test, y_pred, average="macro")
+    y_pred = np.zeros((X_test.shape[0], len(loader.classes)))
+    for m in models:
+        y_pred += m.predict_proba(X_test) / 5
+    f1 = f1_score(y_test, np.argmax(y_pred, axis=1), average="macro")
     logger.info(f"F1: {f1:.3f}")
