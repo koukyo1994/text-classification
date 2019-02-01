@@ -123,3 +123,6 @@ dmypy.json
 
 # Editor Settings
 .vscode
+
+# Log
+*.log

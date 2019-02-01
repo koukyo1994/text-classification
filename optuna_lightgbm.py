@@ -19,8 +19,7 @@ y_test = None
 
 
 def optimal_params(trial: optuna.Trial):
-    boosting = trial.suggest_categorical("boosting_type",
-                                         ["gbdt", "dart"])
+    boosting = trial.suggest_categorical("boosting_type", ["gbdt", "dart"])
     learning = trial.suggest_uniform("learning_rate", 1e-5, 0.2)
     num_leaves = trial.suggest_int("num_leaves", 5, 1000)
     sub_sample = trial.suggest_int("subsample_for_bin", 100, 200000)
@@ -99,7 +98,8 @@ if __name__ == "__main__":
 
     with timer("optimize", logger):
         study = optuna.create_study()
-        study.optimize(optimal_params, n_trials=args.ntrial, n_jobs=args.n_jobs)
+        study.optimize(
+            optimal_params, n_trials=args.ntrial, n_jobs=args.n_jobs)
 
     logger.info(f"Best params: {study.best_params}")
     logger.info(f"Best value: {study.best_value}")
