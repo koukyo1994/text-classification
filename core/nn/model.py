@@ -33,7 +33,6 @@ class NeuralNet(nn.Module):
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.1)
         self.linear2 = nn.Linear(linear_size, n_classes)
-        self.softmax = nn.Softmax()
 
     def forward(self, x):
         h_embedding = self.embedding(x)
@@ -43,7 +42,7 @@ class NeuralNet(nn.Module):
         h_gru, _ = self.gru(h_lstm)
         linear = self.relu(self.linear(h_gru))
         h_drop = self.dropout(linear)
-        out = self.linear2(h_drop)
+        out = F.log_softmax(self.linear2(h_drop), dim=1)
 
         return out
 
@@ -73,7 +72,7 @@ def train_and_validate(X, y, X_test, y_test, embedding_matrix, logger,
         model.cuda()
 
         logger.info(f"Fold {i + 1}")
-        loss_fn = nn.CrossEntropyLoss(reduction="mean")
+        loss_fn = F.nll_loss
         optimizer = optim.Adam(model.parameters())
 
         train = torch.utils.data.TensorDataset(X_train, y_train)
