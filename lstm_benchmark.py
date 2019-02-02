@@ -31,8 +31,8 @@ if __name__ == "__main__":
     y_test = test["label"]
 
     with timer("Convert to sequence", logger):
-        X, X_test, word_index = to_sequence(X, X_test)
+        X, X_test, word_index = to_sequence(X, X_test, max_features=80000)
 
     with timer("Load embedding", logger):
-        embedding_matrix = load_w2v(word_index, args.embedding, 95000)
+        embedding_matrix = load_w2v(word_index, args.embedding, 80000)
     train_and_validate(X, y, X_test, y_test, embedding_matrix, logger, 10)
