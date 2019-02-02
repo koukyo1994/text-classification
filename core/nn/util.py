@@ -40,7 +40,9 @@ def load_w2v(word_index, filepath, max_features=95000):
     for word, i in word_index.items():
         if i >= max_features:
             continue
-        embedding_vector = embeddings_dict.get_vector(word)
-        if embedding_vector is not None:
+        try:
+            embedding_vector = embeddings_dict.get_vector(word)
             embedding_matrix[i] = embedding_vector
+        except KeyError:
+            pass
     return embedding_matrix

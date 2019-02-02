@@ -35,4 +35,4 @@ if __name__ == "__main__":
 
     with timer("Load embedding", logger):
         embedding_matrix = load_w2v(word_index, args.embedding, 95000)
-    train_and_validate(X, y, X_test, y_test, embedding_matrix, logger)
+    train_and_validate(X, y, X_test, y_test, embedding_matrix, logger, 10)
