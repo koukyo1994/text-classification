@@ -2,7 +2,9 @@ IMAGETAG := "workspace:1.1"
 EXP := "exp"
 NTRIAL := 200
 NJOBS := 3
-EMB := $$HOME/Data/Embedding/model.vec
+EMB := $$HOME/Data/Embeddings/model.vec
+DEVICE := "cpu"
+NEPOCHS := 10
 
 docker/build:
 	docker build -t ${IMAGETAG} .
@@ -29,4 +31,4 @@ optuna/lightgbm:
 	docker run -v `pwd`:/app -it ${IMAGETAG} python optuna_lightgbm.py --exp ${EXP} --ntrial ${NTRIAL} --n_jobs ${NJOBS}
 
 train/lstm:
-	python lstm_benchmark.py --exp ${EXP} --embedding ${EMB}
+	python lstm_benchmark.py --exp ${EXP} --embedding ${EMB} --device ${DEVICE} --n_epochs ${NEPOCHS}

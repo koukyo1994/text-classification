@@ -120,6 +120,7 @@ dmypy.json
 *.csv
 *.txt
 !requirements.txt
+*.pt
 
 # Editor Settings
 .vscode
